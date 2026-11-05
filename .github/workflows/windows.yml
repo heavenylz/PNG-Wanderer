@@ -46,6 +46,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           $tag = "${{ github.ref_name }}"
+          gh release view $tag 2>$null
+          if ($LASTEXITCODE -eq 0) { Write-Output "Release already exists; keeping published assets."; exit 0 }
           $options = @()
           if ($tag -match '(?i)(alpha|beta|rc|pre)') { $options += '--prerelease' }
           gh release create $tag "dist/PNG-Wanderer.exe" --title "PNG Wanderer $tag" --notes-file "RELEASE_NOTES.md" @options
+
